@@ -4,7 +4,9 @@
   "description": "Quality selection plugin for Flowplayer HTML5",
   "main": "quality-selector.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "min": "uglifyjs ./quality-selector.js > dist/quality-selector.min.js",
+    "styl": "stylus < stylus/quality-selector.styl > dist/quality-selector.css"
   },
   "repository": {
     "type": "git",
@@ -20,5 +22,12 @@
   "bugs": {
     "url": "https://github.com/flowplayer/flowplayer-quality-selector/issues"
   },
-  "homepage": "https://github.com/flowplayer/flowplayer-quality-selector"
+  "homepage": "https://github.com/flowplayer/flowplayer-quality-selector",
+  "devDependencies": {
+    "stylus": "^0.53.0",
+    "uglify-js": "^2.6.1"
+  },
+  "peerDependencies": {
+    "flowplayer": "^6.0.0"
+  }
 }
