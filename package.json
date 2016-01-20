@@ -1,0 +1,24 @@
+{
+  "name": "flowplayer-quality-selector",
+  "version": "1.0.0",
+  "description": "Quality selection plugin for Flowplayer HTML5",
+  "main": "quality-selector.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flowplayer/flowplayer-quality-selector"
+  },
+  "keywords": [
+    "Flowplayer",
+    "video",
+    "HTML5"
+  ],
+  "author": "Flowplayer Oy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/flowplayer/flowplayer-quality-selector/issues"
+  },
+  "homepage": "https://github.com/flowplayer/flowplayer-quality-selector"
+}
