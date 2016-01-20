@@ -1,0 +1,42 @@
+.flowplayer
+  .fp-quality-selector
+    transition 0.2s ease-in
+    box-sizing border-box
+    -moz-box-sizing border-box
+    position absolute
+    right 10px
+    bottom 40px
+    width 0px
+    overflow hidden
+    font-size 12px
+    font-weight bold
+
+    li
+      display block
+      list-style none
+      background-color #333
+      background-color rgba(#333, 0.6)
+      margin 5px
+      padding 5px
+      border-radius 3px
+      color #fff
+      text-shadow 0px 0px 2px #000
+      overflow hidden
+      text-align center
+
+      &.active
+        background-color #00a7c8
+        background-color rgba(#00a7c8, 0.6)
+        cursor default
+        &:hover
+          background-color #00a7c8
+          background-color rgba(#00a7c8, 0.6)
+      &:hover
+        background-color #444
+        background-color rgba(#333, 0.8)
+  &.is-mouseover
+    .fp-quality-selector
+      width 80px
+  &.is-finished, &.is-disabled
+    .fp-quality-selector
+      width 0px
