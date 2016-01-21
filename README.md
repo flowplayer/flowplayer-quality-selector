@@ -1,15 +1,42 @@
-# flowplayer-quality-selector
+# Flowplayer quality selector plugin
 
-Quality selection plugin for Flowplayer HTML5
+This plugin adds manual video quality selection to Flowplayer HTML5.
 
-## Usage & Demo
+## Usage
 
-See https://flowplayer.org/demos/qsel/
+See: https://flowplayer.org/docs/plugins.html#quality-selector
 
-## Contributing
+- [prerequisites](https://flowplayer.org/docs/plugins.html#quality-selector-prerequisites)
+- [loading the assets](https://flowplayer.org/docs/plugins.html#quality-selector-assets)
+- [configuration](https://flowplayer.org/docs/plugins.html#quality-selector-configuration)
 
-To build the plugin:
+## Demos
 
- * `npm install` - install dependencies
- * `npm run styl` - generate css for the widget
- * `npm run min` - generate the minified file
+- [quality selector with video from Flowplayer Drive](https://flowplayer.org/demos/qsel/)
+- [quality selector outside Drive](http://demos.flowplayer.org/scripting/drive-qsel.html)
+
+## Building the plugin
+
+Build requirement:
+
+- [nodejs](https://nodejs.org) with [npm](https://www.npmjs.com)
+
+```sh
+cd flowplayer-quality-selector
+make deps
+make
+```
+
+## Compatibility
+
+The plugin requires Flowplayer HTML5 version 6.0.0 or greater.
+
+With version 5.x load the following assets (no longer developed):
+
+```html
+<link rel="stylesheet" href="//flowplayer.org/drive/quality-selector.css">
+
+<!-- ... -->
+
+<script src="//flowplayer.org/drive/quality-selector.js"></script>
+```
