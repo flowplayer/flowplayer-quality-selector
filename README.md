@@ -15,13 +15,17 @@ See: https://flowplayer.org/docs/plugins.html#quality-selector
 - [quality selector with video from Flowplayer Drive](https://flowplayer.org/demos/qsel/)
 - [quality selector outside Drive](http://demos.flowplayer.org/scripting/drive-qsel.html)
 
-## Contributing
+## Building the plugin
 
-To build the plugin:
+Build requirement:
 
- * `npm install` - install dependencies
- * `npm run styl` - generate css for the widget
- * `npm run min` - generate the minified file
+- [nodejs](https://nodejs.org) with [npm](https://www.npmjs.com)
+
+```sh
+cd flowplayer-quality-selector
+make deps
+make
+```
 
 ## Compatibility
 
