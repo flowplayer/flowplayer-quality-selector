@@ -1,3 +1,15 @@
+/*!
+
+   Flowplayer HTML5 quality selector plugin
+
+   Copyright (c) 2016, Flowplayer Oy
+
+   Released under the MIT License:
+   http://www.opensource.org/licenses/mit-license.php
+
+   revision: $GIT_ID$
+
+*/
 
 (function(flowplayer) {
   flowplayer(function(api, root) {
