@@ -13,7 +13,7 @@ See: https://flowplayer.org/docs/plugins.html#quality-selector
 ## Demos
 
 - [quality selector with video from Flowplayer Drive](https://flowplayer.org/demos/qsel/)
-- [quality selector outside Drive](http://demos.flowplayer.org/scripting/drive-qsel.html)
+- [quality selector outside Drive](http://demos.flowplayer.org/scripting/qsel.html)
 
 ## Building the plugin
 
