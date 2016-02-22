@@ -54,3 +54,11 @@ Change separator capability (default was a "-")
     //-> ...
  }
 ```
+
+## Install with bower
+
+Change separator capability (default was a "-")
+
+```sh
+ bower install flowplayer-quality-selector-separator
+```
