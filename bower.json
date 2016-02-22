@@ -14,15 +14,4 @@
     "HTML5"
   ],
   "homepage": "https://github.com/ishapkin/flowplayer-quality-selector",
-  "moduleType": [],
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
-  "dependencies": {
-    "flowplayer-quality-selector": "ishapkin/flowplayer-quality-selector"
-  }
 }
