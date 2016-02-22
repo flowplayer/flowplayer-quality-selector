@@ -1,5 +1,6 @@
 {
   "name": "ishapkin/flowplayer-quality-selector",
+  "version": "1.0.1",
   "description": "Quality selection plugin for Flowplayer HTML5",
   "main": "flowplayer.quality-selector.js",
   "authors": [
