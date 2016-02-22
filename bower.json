@@ -1,0 +1,27 @@
+{
+  "name": "flowplayer-quality-selector-separator",
+  "description": "Quality selection plugin for Flowplayer HTML5",
+  "main": "flowplayer.quality-selector.js",
+  "authors": [
+    "Flowplayer Oy",
+    "Ilya Shapkin"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "Flowplayer",
+    "video",
+    "HTML5"
+  ],
+  "homepage": "https://github.com/ishapkin/flowplayer-quality-selector",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "flowplayer-quality-selector": "flowplayer-quality-selector-separator"
+  }
+}
