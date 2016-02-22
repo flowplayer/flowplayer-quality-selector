@@ -40,3 +40,19 @@ With version 5.x load the following assets (no longer developed):
 
 <script src="//flowplayer.org/drive/quality-selector.js"></script>
 ```
+
+## Add change selector capability
+
+Was added change separator capability (default was a "-")
+
+```javascript
+ clip: {
+    title: 'Peter Griffin Shock Suit',
+    //-> change default
+    separator: '_', 
+    clearPath: false,
+    //->quality selector plugin configuration
+    qualities: ["360p", "480p", "720p"],
+    //->...
+ }
+```
