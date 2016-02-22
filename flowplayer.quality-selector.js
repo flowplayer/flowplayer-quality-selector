@@ -13,25 +13,30 @@
 
 (function(flowplayer) {
   flowplayer(function(api, root) {
-    'use strict';
-    var common = flowplayer.common
-     ,  explicitSrc = false;
+    "use strict";
+    var common = flowplayer.common,
+        explicitSrc = false;
 
     //only register once
     if (api.pluginQualitySelectorEnabled) return;
     api.pluginQualitySelectorEnabled = true;
 
-    if (!flowplayer.support.inlineVideo) return; // No inline video 
+    if (!flowplayer.support.inlineVideo) return; // No inline video
 
     if (api.conf.qualities) {
-      api.conf.qualities = typeof api.conf.qualities === 'string' ? api.conf.qualities.split(',') : api.conf.qualities;
+      api.qualities = typeof api.conf.qualities === 'string' ? api.conf.qualities.split(',') : api.conf.qualities;
+      api.defaultQuality = api.conf.defaultQuality;
     }
+    //-> add new config params
+    api.separator = typeof api.conf.clip.separator != 'undefined' ? api.conf.clip.separator : '-';
+    api.clearPath = typeof api.conf.clip.clearPath != 'undefined' ? api.conf.clip.clearPath : true;
 
     flowplayer.bean.on(root, 'click', '.fp-quality-selector li', function(ev) {
       if (!/\bactive\b/.test(this.className)) {
-        var currentTime = api.finished ? 0 : api.video.time
-         ,  quality = ev.currentTarget.getAttribute('data-quality')
-         ,  src;
+        var currentTime = api.finished ? 0 : api.video.time,
+            quality = ev.currentTarget.getAttribute('data-quality'),
+            src,
+            re;
         src = processClip(api.video, quality);
         api.quality = quality;
         if (!src) return;
@@ -50,12 +55,12 @@
     });
 
     api.bind('load', function(ev, api, video) {
-      api.qualities = video.qualities || api.conf.qualities || [];
-      api.defaultQuality = video.defaultQuality || api.conf.defaultQuality;
+      api.qualities = video.qualities || api.qualities || [];
+      api.defaultQuality = video.defaultQuality || api.defaultQuality;
       if (typeof api.qualities === 'string') api.qualities = api.qualities.split(',');
       if (!api.quality) return; // Let's go with default quality
-      var desiredQuality = findOptimalQuality(api.quality, api.qualities)
-       ,  newClip = processClip(video, desiredQuality, !explicitSrc);
+      var desiredQuality = findOptimalQuality(api.quality, api.qualities),
+          newClip = processClip(video, desiredQuality, !explicitSrc);
       if (!explicitSrc && newClip) {
         ev.preventDefault();
         api.loading = false;
@@ -66,17 +71,17 @@
     api.bind('ready', function(ev, api, video) {
       var quality = /mpegurl/i.test(video.type) ? 'abr' :  getQualityFromSrc(video.src, api.qualities) || Math.min(video.height, video.width) + 'p';
       removeAllQualityClasses();
+      api.quality = quality;
       common.addClass(root, 'quality-' + quality);
       var ui = common.find('.fp-ui', root)[0];
       common.removeNode(common.find('.fp-quality-selector', ui)[0]);
       if (api.qualities.length < 2) return;
-      api.quality = quality;
       var selector = common.createElement('ul', {'class': 'fp-quality-selector'});
       ui.appendChild(selector);
       if (hasABRSource(video) && canPlay('application/x-mpegurl') || api.conf.swfHls) {
         selector.appendChild(common.createElement('li', {'data-quality': 'abr', 'class': quality === 'abr' ? 'active' : ''}, 'Auto'));
       }
-      api.qualities.forEach(function(q) {
+      api.qualities.forEach(function(q, i) {
         selector.appendChild(common.createElement('li', {'data-quality': q, 'class': q == quality ? 'active': ''}, q));
       });
     });
@@ -99,7 +104,8 @@
     }
 
     function getQualityFromSrc(src, qualities) {
-      var m = /-(\d+p)(\.(mp4|webm))?$/.exec(src);
+      //add separator in regexp
+      var m = RegExp(api.separator + "(\\d+p)(\\.(mp4|webm))?$").exec(src);
       if (!m) return;
       if (qualities.indexOf(m[1]) === -1) return;
       return m[1];
@@ -114,7 +120,8 @@
 
     function findOptimalQuality(previousQuality, newQualities) {
       if (previousQuality === 'abr') return 'abr';
-      var a = parseInt(previousQuality, 0), ret;
+      var a = parseInt(previousQuality, 0),
+          ret;
       newQualities.forEach(function(quality, i) {
         if (i == newQualities.length - 1 && !ret) { // The best we can do
           ret = quality;
@@ -127,24 +134,31 @@
     }
 
     function processClip(video, quality, clean) {
-      var changed = false, re
-       ,  isDefaultQuality = quality === api.defaultQuality
-       ,  currentQuality = api.quality || Math.min(api.video.height, api.video.width) + 'p';
+      var changed = false, re,
+          isDefaultQuality = quality === api.defaultQuality,
+          currentQuality = api.quality || Math.min(api.video.height, api.video.width) + 'p';
       if (currentQuality === api.defaultQuality) {
         re = /(.+?)((\.(mp4|webm)$|$))/;
       }
       else {
-        re = /(-\d+p)?((\.(mp4|webm)$|$))/;
+        //->add separator in regexp
+        re = new RegExp("(" + api.separator + "\\d+p)?((\\.(mp4|webm)$|$))");
       }
       var newSources = video.sources.map(function(src) {
         if (quality === 'abr' || (clean && isDefaultQuality) || /mpegurl/i.test(src.type)) return src;
         var n = {
           type: src.type,
-          src: src.src.replace(re, currentQuality === api.defaultQuality ?
-                               '$1-' + quality + '$2' :
-                                 isDefaultQuality ? '$2' : '-' + quality + '$2')
+          //->add separator
+          src: src.src.replace(re, currentQuality === api.defaultQuality ? "$1" + api.separator + quality + "$2" : isDefaultQuality ? "$2" : api.separator + quality + "$2")
         };
         if (n.src !== src.src) changed = true;
+        //->check if clear path
+        //->for use it, you must remove defaultQuality parameter from config
+        if(!api.clearPath && changed && api.defaultQuality === currentQuality) {
+          //->add separator
+          var clearSrc = n.src.split(api.separator + currentQuality);
+          n.src = clearSrc[0] + clearSrc[1];
+        }
         return n;
       });
       var newSourcesStr = JSON.stringify(newSources);
@@ -154,11 +168,12 @@
         else ret = re.test(a.type) - re.test(b.type);
         return ret;
       });
+
       changed = changed || JSON.stringify(newSources) !== newSourcesStr;
+
       var clip = flowplayer.extend({}, video, {
         sources: newSources
       });
-
 
       return changed ? clip : false;
     }

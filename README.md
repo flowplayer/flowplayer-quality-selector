@@ -43,7 +43,7 @@ With version 5.x load the following assets (no longer developed):
 
 ## Add change selector capability
 
-Was added change separator capability (default was a "-")
+Change separator capability (default was a "-")
 
 ```javascript
  clip: {
@@ -51,8 +51,6 @@ Was added change separator capability (default was a "-")
     //-> change default
     separator: '_', 
     clearPath: false,
-    //->quality selector plugin configuration
-    qualities: ["360p", "480p", "720p"],
-    //->...
+    //-> ...
  }
 ```
