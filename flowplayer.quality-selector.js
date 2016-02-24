@@ -1,15 +1,15 @@
 /*!
 
-   Flowplayer HTML5 quality selector plugin
+ Flowplayer HTML5 quality selector plugin
 
-   Copyright (c) 2016, Flowplayer Oy
+ Copyright (c) 2016, Flowplayer Oy
 
-   Released under the MIT License:
-   http://www.opensource.org/licenses/mit-license.php
+ Released under the MIT License:
+ http://www.opensource.org/licenses/mit-license.php
 
-   revision: $GIT_ID$
+ revision: $GIT_ID$
 
-*/
+ */
 
 (function(flowplayer) {
   flowplayer(function(api, root) {
@@ -29,7 +29,6 @@
     }
     //-> add new config params
     api.separator = typeof api.conf.clip.separator != 'undefined' ? api.conf.clip.separator : '-';
-    api.clearPath = typeof api.conf.clip.clearPath != 'undefined' ? api.conf.clip.clearPath : true;
 
     flowplayer.bean.on(root, 'click', '.fp-quality-selector li', function(ev) {
       if (!/\bactive\b/.test(this.className)) {
@@ -154,7 +153,7 @@
         if (n.src !== src.src) changed = true;
         //->check if clear path
         //->for use it, you must remove defaultQuality parameter from config
-        if(!api.clearPath && changed && api.defaultQuality === currentQuality) {
+        if(changed && api.defaultQuality === currentQuality) {
           //->add separator
           var clearSrc = n.src.split(api.separator + currentQuality);
           n.src = clearSrc[0] + clearSrc[1];

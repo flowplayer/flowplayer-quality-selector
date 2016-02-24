@@ -50,7 +50,6 @@ Change separator capability (default was a "-")
     title: 'Peter Griffin Shock Suit',
     //-> change default
     separator: '_', 
-    clearPath: false,
     //-> ...
  }
 ```
