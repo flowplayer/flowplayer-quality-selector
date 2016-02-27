@@ -50,7 +50,7 @@
       }
     });
 
-    api.bind('load', function(ev, api, video) {
+    api.on('load', function(ev, api, video) {
       api.qualities = video.qualities || api.conf.qualities || [];
       api.defaultQuality = video.defaultQuality || api.conf.defaultQuality;
       if (typeof api.qualities === 'string') api.qualities = api.qualities.split(',');
@@ -62,9 +62,8 @@
         api.loading = false;
         api.load(newClip);
       }
-    });
 
-    api.bind('ready', function(ev, api, video) {
+    }).on('ready', function(ev, api, video) {
       var quality = /mpegurl/i.test(video.type) ? 'abr' :  getQualityFromSrc(video.src, api.qualities) || Math.min(video.height, video.width) + 'p';
       removeAllQualityClasses();
       common.addClass(root, 'quality-' + quality);
@@ -80,10 +79,11 @@
       api.qualities.forEach(function(q) {
         selector.appendChild(common.createElement('li', {'data-quality': q, 'class': q == quality ? 'active': ''}, q));
       });
-    });
-    api.bind('unload', function() {
+
+    }).on('unload', function() {
       removeAllQualityClasses();
       common.removeNode(common.find('.fp-quality-selector', root)[0]);
+
     });
 
 
