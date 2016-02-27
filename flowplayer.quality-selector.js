@@ -28,9 +28,10 @@
     }
 
     flowplayer.bean.on(root, 'click', '.fp-quality-selector li', function(ev) {
-      if (!/\bactive\b/.test(this.className)) {
+      var elem = ev.currentTarget;
+      if (!common.hasClass(elem, 'active')) {
         var currentTime = api.finished ? 0 : api.video.time
-         ,  quality = ev.currentTarget.getAttribute('data-quality')
+         ,  quality = elem.getAttribute('data-quality')
          ,  src;
         src = processClip(api.video, quality);
         api.quality = quality;
