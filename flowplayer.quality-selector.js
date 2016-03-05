@@ -108,6 +108,7 @@
 
     function removeAllQualityClasses() {
       if (!api.qualities || !api.qualities.length) return;
+      common.removeClass(root, 'quality-abr');
       api.qualities.forEach(function(quality) {
         common.removeClass(root, 'quality-' + quality);
       });
