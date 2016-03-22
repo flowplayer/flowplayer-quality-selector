@@ -50,6 +50,15 @@
             });
           }
         });
+      } else {
+
+        var qualityElement = root.querySelector(".fp-quality-selector");
+        if(qualityElement.className.indexOf("show-click") == -1) {
+          qualityElement.className = "fp-quality-selector show-click";
+        } else {
+          qualityElement.className = "fp-quality-selector";
+        }
+
       }
     });
 
