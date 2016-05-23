@@ -11,7 +11,7 @@
 
 */
 
-(function(flowplayer) {
+var extension = function(flowplayer) {
   flowplayer(function(api, root) {
     'use strict';
     var common = flowplayer.common
@@ -166,4 +166,7 @@
     }
 
   });
-})(typeof module === 'object' && module.exports ? require('flowplayer') : window.flowplayer);
+};
+
+if (typeof module === 'object' && module.exports) module.exports = extension;
+else if (window.flowplayer) extension(window.flowplayer);
