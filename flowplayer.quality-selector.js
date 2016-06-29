@@ -14,8 +14,18 @@
 var extension = function(flowplayer) {
   flowplayer(function(api, root) {
     'use strict';
-    var common = flowplayer.common
-     ,  explicitSrc = false;
+    var bean = flowplayer.bean
+     ,  common = flowplayer.common
+     ,  explicitSrc = false
+     ,  hlsjs = false;
+
+    if (api.conf.hlsjs !== false) {
+        flowplayer.engines.forEach(function (engine) {
+            if (engine.engineName === 'hlsjs' && engine.canPlay('application/x-mpegurl', api.conf)) {
+                hlsjs = true;
+            }
+        });
+    }
 
     //only register once
     if (api.pluginQualitySelectorEnabled) return;
@@ -27,7 +37,7 @@ var extension = function(flowplayer) {
       api.conf.qualities = typeof api.conf.qualities === 'string' ? api.conf.qualities.split(',') : api.conf.qualities;
     }
 
-    flowplayer.bean.on(root, 'click', '.fp-quality-selector li', function(ev) {
+    bean.on(root, 'click', '.fp-quality-selector li', function(ev) {
       var elem = ev.currentTarget;
       if (!common.hasClass(elem, 'active')) {
         var currentTime = api.finished ? 0 : api.video.time
@@ -37,14 +47,19 @@ var extension = function(flowplayer) {
         api.quality = quality;
         if (!src) return;
         explicitSrc = true;
+        if (hlsjs && src.hlsjs !== false && !api.live && currentTime && quality === 'abr') {
+            src.hlsjs = {startPosition: currentTime};
+        }
         api.load(src, function() {
           //Make sure api is not in finished state anymore
           explicitSrc = false;
           api.finished = false;
-          if (currentTime && !api.live) {
+          if (currentTime && !api.live && !(src.hlsjs && src.hlsjs.startPosition)) {
             api.seek(currentTime, function() {
               api.resume();
             });
+          } else if (src.hlsjs) {
+            src.hlsjs.startPosition = 0;
           }
         });
       }

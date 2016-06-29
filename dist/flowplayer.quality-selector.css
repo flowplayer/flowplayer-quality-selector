@@ -6,12 +6,12 @@
  * Released under the MIT License:
  * http://www.opensource.org/licenses/mit-license.php
  *
- * revision: 3c6cdcf
+ * revision: 341a65a
  */
 .flowplayer .fp-quality-selector {
   transition: 0.2s ease-in;
-  box-sizing: border-box;
   -moz-box-sizing: border-box;
+  box-sizing: border-box;
   position: absolute;
   right: 10px;
   bottom: 40px;

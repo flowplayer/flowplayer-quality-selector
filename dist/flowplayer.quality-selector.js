@@ -7,15 +7,25 @@
    Released under the MIT License:
    http://www.opensource.org/licenses/mit-license.php
 
-   revision: 3c6cdcf
+   revision: 341a65a
 
 */
 
-(function(flowplayer) {
+var extension = function(flowplayer) {
   flowplayer(function(api, root) {
     'use strict';
-    var common = flowplayer.common
-     ,  explicitSrc = false;
+    var bean = flowplayer.bean
+     ,  common = flowplayer.common
+     ,  explicitSrc = false
+     ,  hlsjs = false;
+
+    if (api.conf.hlsjs !== false) {
+        flowplayer.engines.forEach(function (engine) {
+            if (engine.engineName === 'hlsjs' && engine.canPlay('application/x-mpegurl', api.conf)) {
+                hlsjs = true;
+            }
+        });
+    }
 
     //only register once
     if (api.pluginQualitySelectorEnabled) return;
@@ -27,29 +37,36 @@
       api.conf.qualities = typeof api.conf.qualities === 'string' ? api.conf.qualities.split(',') : api.conf.qualities;
     }
 
-    flowplayer.bean.on(root, 'click', '.fp-quality-selector li', function(ev) {
-      if (!/\bactive\b/.test(this.className)) {
+    bean.on(root, 'click', '.fp-quality-selector li', function(ev) {
+      var elem = ev.currentTarget;
+      if (!common.hasClass(elem, 'active')) {
         var currentTime = api.finished ? 0 : api.video.time
-         ,  quality = ev.currentTarget.getAttribute('data-quality')
+         ,  quality = elem.getAttribute('data-quality')
+         ,  seek
          ,  src;
         src = processClip(api.video, quality);
         api.quality = quality;
         if (!src) return;
         explicitSrc = true;
+        if (hlsjs && src.hlsjs !== false && !api.live && currentTime && quality === 'abr') {
+            src.hlsjs = {startPosition: currentTime};
+        }
         api.load(src, function() {
           //Make sure api is not in finished state anymore
           explicitSrc = false;
           api.finished = false;
-          if (currentTime && !api.live) {
+          if (currentTime && !api.live && !(src.hlsjs && src.hlsjs.startPosition)) {
             api.seek(currentTime, function() {
               api.resume();
             });
+          } else if (src.hlsjs) {
+            src.hlsjs.startPosition = 0;
           }
         });
       }
     });
 
-    api.bind('load', function(ev, api, video) {
+    api.on('load', function(ev, api, video) {
       api.qualities = video.qualities || api.conf.qualities || [];
       api.defaultQuality = video.defaultQuality || api.conf.defaultQuality;
       if (typeof api.qualities === 'string') api.qualities = api.qualities.split(',');
@@ -61,9 +78,8 @@
         api.loading = false;
         api.load(newClip);
       }
-    });
 
-    api.bind('ready', function(ev, api, video) {
+    }).on('ready', function(ev, api, video) {
       var quality = /mpegurl/i.test(video.type) ? 'abr' :  getQualityFromSrc(video.src, api.qualities) || Math.min(video.height, video.width) + 'p';
       removeAllQualityClasses();
       common.addClass(root, 'quality-' + quality);
@@ -79,10 +95,11 @@
       api.qualities.forEach(function(q) {
         selector.appendChild(common.createElement('li', {'data-quality': q, 'class': q == quality ? 'active': ''}, q));
       });
-    });
-    api.bind('unload', function() {
+
+    }).on('unload', function() {
       removeAllQualityClasses();
       common.removeNode(common.find('.fp-quality-selector', root)[0]);
+
     });
 
 
@@ -107,6 +124,7 @@
 
     function removeAllQualityClasses() {
       if (!api.qualities || !api.qualities.length) return;
+      common.removeClass(root, 'quality-abr');
       api.qualities.forEach(function(quality) {
         common.removeClass(root, 'quality-' + quality);
       });
@@ -164,4 +182,7 @@
     }
 
   });
-})(typeof module === 'object' && module.exports ? require('flowplayer') : window.flowplayer);
+};
+
+if (typeof module === 'object' && module.exports) module.exports = extension;
+else if (window.flowplayer) extension(window.flowplayer);
