@@ -7,7 +7,7 @@
    Released under the MIT License:
    http://www.opensource.org/licenses/mit-license.php
 
-   revision: a0ee936
+   revision: 1003945
 
 */
 
@@ -93,7 +93,7 @@
           selector.appendChild(common.createElement('li', {'data-quality': 'abr', 'class': quality === 'abr' ? 'active' : ''}, 'Auto'));
         }
         api.qualities.forEach(function(q) {
-          selector.appendChild(common.createElement('li', {'data-quality': q, 'class': q == quality ? 'active': ''}, q));
+          selector.appendChild(common.createElement('li', {'data-quality': q.quality || q, 'class': (q.quality || q) == quality ? 'active': ''}, q.quality || q));
         });
 
       }).on('unload', function() {
@@ -116,31 +116,46 @@
       }
 
       function getQualityFromSrc(src, qualities) {
-        var m = /-(\d+p)(\.(mp4|webm))?$/.exec(src);
-        if (!m) return;
-        if (qualities.indexOf(m[1]) === -1) return;
-        return m[1];
+        if (typeof qualities[0] === 'object') {
+          var f = /([^\/]*?)(\.([a-zA-Z0-9]*))?$/.exec(src);
+          return qualities.find(function (q) { return q.src === f[1]; }).quality;
+        } else {
+          var m = /-(\d+p)(\.(mp4|webm))?$/.exec(src);
+          if (!m) return;
+          if (qualities.indexOf(m[1]) === -1) return;
+          return m[1];
+        }
       }
 
       function removeAllQualityClasses() {
         if (!api.qualities || !api.qualities.length) return;
         common.removeClass(root, 'quality-abr');
         api.qualities.forEach(function(quality) {
-          common.removeClass(root, 'quality-' + quality);
+          common.removeClass(root, 'quality-' + (quality.quality || quality));
         });
       }
 
       function findOptimalQuality(previousQuality, newQualities) {
         if (previousQuality === 'abr') return 'abr';
-        var a = parseInt(previousQuality, 0), ret;
-        newQualities.forEach(function(quality, i) {
-          if (i == newQualities.length - 1 && !ret) { // The best we can do
-            ret = quality;
-          }
-          if (parseInt(quality) <= a && parseInt(newQualities[i+1]) > a) { // Is between
-            ret = quality;
-          }
-        });
+        var a = parseInt(previousQuality, 10), ret;
+        if (isNaN(a)) {
+          newQualities.forEach(function (quality, i) {
+            if (typeof quality === 'object') quality = quality.quality;
+            if (previousQuality === quality) {
+              ret = quality;
+            }
+          });
+        } else {
+          newQualities.forEach(function (quality, i) {
+            if (typeof quality === 'object') quality = quality.quality;
+            var nextQuality = newQualities[i + 1];
+            if (typeof nextQuality === 'object') nextQuality = nextQuality.quality;
+            if (parseInt(quality, 10) <= a && (parseInt(nextQuality, 10) > a || !nextQuality)) { // Is between or higher than final
+              ret = quality;
+            }
+          });
+        }
+        if (!ret) ret = api.defaultQuality; // The best we can do: the default quality
         return ret;
       }
 
@@ -158,7 +173,9 @@
           if (quality === 'abr' || (clean && isDefaultQuality) || /mpegurl/i.test(src.type)) return src;
           var n = {
             type: src.type,
-            src: src.src.replace(re, currentQuality === api.defaultQuality ?
+            src: typeof api.qualities[0] === 'object' ? 
+              src.src.replace(/[^\/]*?(\.([a-zA-Z0-9]*)$|$)/, api.qualities.find(function (q) { return q.quality === quality; }).src + '$1') : 
+              src.src.replace(re, currentQuality === api.defaultQuality ?
                                  '$1-' + quality + '$2' :
                                    isDefaultQuality ? '$2' : '-' + quality + '$2')
           };
