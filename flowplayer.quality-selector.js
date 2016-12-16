@@ -111,8 +111,8 @@
 
 
       function canPlay(type) {
-        var videoTag = document.createElement('video');
-        return !!videoTag.canPlayType(type).replace('no', '');
+        var videoTag = common.createElement('video');
+        return typeof videoTag.canPlayType === 'function' && !!videoTag.canPlayType(type).replace('no', '');
       }
 
       function getQualityFromSrc(src, qualities) {
