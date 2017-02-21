@@ -89,7 +89,7 @@
         api.quality = quality;
         var selector = common.createElement('ul', {'class': 'fp-quality-selector'});
         ui.appendChild(selector);
-        if (hasABRSource(video) && canPlay('application/x-mpegurl') || api.conf.swfHls) {
+        if (hasABRSource(video) && (canPlay('application/x-mpegurl') || hlsjs || api.conf.swfHls !== false)) {
           selector.appendChild(common.createElement('li', {'data-quality': 'abr', 'class': quality === 'abr' ? 'active' : ''}, 'Auto'));
         }
         api.qualities.forEach(function(q) {
