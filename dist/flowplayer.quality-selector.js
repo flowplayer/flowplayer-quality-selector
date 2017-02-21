@@ -2,12 +2,12 @@
 
    Flowplayer HTML5 quality selector plugin
 
-   Copyright (c) 2016, Flowplayer Oy
+   Copyright (c) 2016-2017, Flowplayer Oy
 
    Released under the MIT License:
    http://www.opensource.org/licenses/mit-license.php
 
-   revision: a0ee936
+   revision: 20fe908
 
 */
 
@@ -89,7 +89,7 @@
         api.quality = quality;
         var selector = common.createElement('ul', {'class': 'fp-quality-selector'});
         ui.appendChild(selector);
-        if (hasABRSource(video) && canPlay('application/x-mpegurl') || api.conf.swfHls) {
+        if (hasABRSource(video) && (canPlay('application/x-mpegurl') || hlsjs || api.conf.swfHls !== false)) {
           selector.appendChild(common.createElement('li', {'data-quality': 'abr', 'class': quality === 'abr' ? 'active' : ''}, 'Auto'));
         }
         api.qualities.forEach(function(q) {
@@ -111,8 +111,8 @@
 
 
       function canPlay(type) {
-        var videoTag = document.createElement('video');
-        return !!videoTag.canPlayType(type).replace('no', '');
+        var videoTag = common.createElement('video');
+        return typeof videoTag.canPlayType === 'function' && !!videoTag.canPlayType(type).replace('no', '');
       }
 
       function getQualityFromSrc(src, qualities) {
